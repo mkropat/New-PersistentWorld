@@ -54,7 +54,8 @@ if ((-not $steamMarkerFile) -or ((Get-Date) - $steamMarkerFile.LastWriteTime).Ho
         +quit
 }
 
-$clusterDir = "$dontStarveDir\MyDediServer"
+$clusterName = 'NpwServer'
+$clusterDir = "$dontStarveDir\$clusterName"
 
 New-Item -ItemType Directory -Force -Path $clusterDir | Out-Null
 
@@ -325,14 +326,14 @@ preset = "DST_CAVE",
 
 }
 
-if (-not (Test-Path $dontStarveDir\DontStarveServer.cmd)) {
+if (-not (Test-Path $dontStarveDir\Start$clusterName.cmd)) {
 
 @"
 pushd %~dp0\bin
 
-start dontstarve_dedicated_server_nullrenderer -cluster MyDediServer -shard Master
-start dontstarve_dedicated_server_nullrenderer -cluster MyDediServer -shard Caves
-"@ | Out-File -Encoding ascii $dontStarveDir\DontStarveServer.cmd
+start dontstarve_dedicated_server_nullrenderer -cluster $clusterName -shard Master
+start dontstarve_dedicated_server_nullrenderer -cluster $clusterName -shard Caves
+"@ | Out-File -Encoding ascii $dontStarveDir\Start$clusterName.cmd
 
 }
 
@@ -340,7 +341,7 @@ if ($AutoStart) {
     (New-Object -ComObject Shell.Application).NameSpace(0x07) | Out-Null
     $startupDir = [Environment]::GetFolderPath('Startup')
     if (-not (Test-Path $startupDir\DontStarveServer.lnk)) {
-        New-Shortcut $startupDir\DontStarveServer.lnk $dontStarveDir\DontStarveServer.cmd
+        New-Shortcut $startupDir\DontStarveServer.lnk $dontStarveDir\Start$clusterName.cmd
     }
 }
 
