@@ -2,6 +2,25 @@
     "$input".ToLower()
 }
 
+function Get-WebFile {
+    param(
+        [string] $Uri,
+        [string] $Destination,
+        [string] $Sha256Checksum
+    )
+
+    Invoke-WebRequest -UseBasicParsing -Uri $Uri -OutFile "$Destination.download"
+
+    if ($Sha256Checksum) {
+        $r = Get-FileHash -Algorithm SHA256 "$Destination.download"
+        if ($r.Hash -ne $Sha256Checksum) {
+            Remove-Item "$Destination.download"
+            throw "Checksum verification failed on $(Split-Path -Leaf $Destination)"
+        }
+    }
+
+    Move-Item "$Destination.download" $Destination
+}
 
 if (-not (Get-Command Expand-Archive -ErrorAction SilentlyContinue)) {
     function Expand-Archive {

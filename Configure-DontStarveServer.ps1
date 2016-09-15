@@ -38,7 +38,7 @@ $steamDir = "$dontStarveDir\steam"
 if (-not (Test-Path $steamDir\steamcmd.exe)) {
     New-Item -ItemType Directory -Force -Path $steamDir | Out-Null
     if (-not (Test-Path $steamDir\steamcmd.zip)) {
-        Invoke-WebRequest -UseBasicParsing https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip -OutFile $steamDir\steamcmd.zip
+        Get-WebFile https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip $steamDir\steamcmd.zip -Sha256Checksum 7669B170DEE42DB8EE2273775ED7DFB2D173BDBA1B849F70D2C7B379290BCE13
     }
 
     Expand-Archive -Path $steamDir\steamcmd.zip -DestinationPath $steamDir
