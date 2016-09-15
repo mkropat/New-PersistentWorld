@@ -9,6 +9,10 @@ function Get-WebFile {
         [string] $Sha256Checksum
     )
 
+    if (Test-Path -PathType Container $Destination) {
+        $Destination = "$Destination\$(Split-Path -Leaf $Uri)"
+    }
+
     Invoke-WebRequest -UseBasicParsing -Uri $Uri -OutFile "$Destination.download"
 
     if ($Sha256Checksum) {
