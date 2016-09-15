@@ -63,7 +63,7 @@ if ($ClusterToken) {
     $ClusterToken | Out-File -Encoding ascii $clusterDir\cluster_token.txt
 }
 
-$cfg = Get-Content $clusterDir\cluster.ini |
+$cfg = Get-Content $clusterDir\cluster.ini -ErrorAction SilentlyContinue |
     foreach { $_ -replace '(?<!\\);.*','' } |
     where { $_ -match '\S.*=.*\S' } |
     Out-String |
