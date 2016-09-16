@@ -52,19 +52,19 @@ if ($Cheats -ne $null) {
     $Cheats = [bool]$Cheats
 }
 
-$kerbalDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'KerbalServer'
+$serverDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'KerbalServer'
 
-New-Item -ItemType Directory -Force -Path $kerbalDir | Out-Null
+New-Item -ItemType Directory -Force -Path $serverDir | Out-Null
 
-if (-not (Test-Path $kerbalDir\DMPServer.zip)) {
-    Get-WebFile http://godarklight.info.tm/dmp/build/release/DMPServer.zip $kerbalDir -Sha256Checksum 363AD93BCE86464C5E0EE535E422BD427A833B047FFFF15452A6322A1022556B
+if (-not (Test-Path $serverDir\DMPServer.zip)) {
+    Get-WebFile http://godarklight.info.tm/dmp/build/release/DMPServer.zip $serverDir -Sha256Checksum 363AD93BCE86464C5E0EE535E422BD427A833B047FFFF15452A6322A1022556B
     
-    Expand-Archive -Path $kerbalDir\DMPServer.zip -DestinationPath $kerbalDir
-    Move-Item $kerbalDir\DMPServer\* $kerbalDir
-    Remove-Item $kerbalDir\DMPServer
+    Expand-Archive -Path $serverDir\DMPServer.zip -DestinationPath $serverDir
+    Move-Item $serverDir\DMPServer\* $serverDir
+    Remove-Item $serverDir\DMPServer
 }
 
-$configDir = "$kerbalDir\Config"
+$configDir = "$serverDir\Config"
 New-Item -ItemType Directory -Force -Path $configDir | Out-Null
 
 $cfg = Get-Content $configDir\Settings.txt -ErrorAction SilentlyContinue |
@@ -160,10 +160,9 @@ safetyBubbleDistance=100
 "@ | Out-File -Encoding ascii $configDir\Settings.txt
 
 if ($AutoStart) {
-    (New-Object -ComObject Shell.Application).NameSpace(0x07) | Out-Null
-    $startupDir = [Environment]::GetFolderPath('Startup')
+    $startupDir = Get-StartupDir
     if (-not (Test-Path $startupDir\KerbalServer.lnk)) {
-        New-Shortcut $startupDir\KerbalServer.lnk $kerbalDir\DMPServer.exe
+        New-Shortcut $startupDir\KerbalServer.lnk $serverDir\DMPServer.exe
     }
 }
 

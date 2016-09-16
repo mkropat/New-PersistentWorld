@@ -2,6 +2,11 @@
     "$input".ToLower()
 }
 
+function Get-StartupDir {
+    (New-Object -ComObject Shell.Application).NameSpace(0x07) | Out-Null
+    [Environment]::GetFolderPath('Startup')
+}
+
 function Get-WebFile {
     param(
         [string] $Uri,

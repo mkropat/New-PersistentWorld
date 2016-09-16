@@ -30,15 +30,15 @@ if ($PauseWhenEmpty -ne $null) {
     $PauseWhenEmpty = [bool]$PauseWhenEmpty
 }
 
-$dontStarveDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Klei\DoNotStarveTogether'
+$serverDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'Klei\DoNotStarveTogether'
 
-New-Item -ItemType Directory -Force -Path $dontStarveDir | Out-Null
+New-Item -ItemType Directory -Force -Path $serverDir | Out-Null
 
-$steamDir = "$dontStarveDir\steam"
+$steamDir = "$serverDir\steam"
 if (-not (Test-Path $steamDir\steamcmd.exe)) {
     New-Item -ItemType Directory -Force -Path $steamDir | Out-Null
     if (-not (Test-Path $steamDir\steamcmd.zip)) {
-        Get-WebFile https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip $steamDir\steamcmd.zip -Sha256Checksum 7669B170DEE42DB8EE2273775ED7DFB2D173BDBA1B849F70D2C7B379290BCE13
+        Get-WebFile https://steamcdn-a.akamaihd.net/client/installer/steamcmd.zip $steamDir -Sha256Checksum 7669B170DEE42DB8EE2273775ED7DFB2D173BDBA1B849F70D2C7B379290BCE13
     }
 
     Expand-Archive -Path $steamDir\steamcmd.zip -DestinationPath $steamDir
@@ -49,13 +49,13 @@ if ((-not $steamMarkerFile) -or ((Get-Date) - $steamMarkerFile.LastWriteTime).Ho
     Write-Verbose 'Checking for updated game files...'
     & $steamDir\steamcmd.exe `
         +login anonymous `
-        +force_install_dir $dontStarveDir `
+        +force_install_dir $serverDir `
         +app_update 343050 validate `
         +quit
 }
 
 $clusterName = 'NpwServer'
-$clusterDir = "$dontStarveDir\$clusterName"
+$clusterDir = "$serverDir\$clusterName"
 
 New-Item -ItemType Directory -Force -Path $clusterDir | Out-Null
 
@@ -326,22 +326,21 @@ preset = "DST_CAVE",
 
 }
 
-if (-not (Test-Path $dontStarveDir\Start$clusterName.cmd)) {
+if (-not (Test-Path $serverDir\Start$clusterName.cmd)) {
 
 @"
 pushd %~dp0\bin
 
 start dontstarve_dedicated_server_nullrenderer -cluster $clusterName -shard Master
 start dontstarve_dedicated_server_nullrenderer -cluster $clusterName -shard Caves
-"@ | Out-File -Encoding ascii $dontStarveDir\Start$clusterName.cmd
+"@ | Out-File -Encoding ascii $serverDir\Start$clusterName.cmd
 
 }
 
 if ($AutoStart) {
-    (New-Object -ComObject Shell.Application).NameSpace(0x07) | Out-Null
-    $startupDir = [Environment]::GetFolderPath('Startup')
+    $startupDir = Get-StartupDir
     if (-not (Test-Path $startupDir\DontStarveServer.lnk)) {
-        New-Shortcut $startupDir\DontStarveServer.lnk $dontStarveDir\Start$clusterName.cmd
+        New-Shortcut $startupDir\DontStarveServer.lnk $serverDir\Start$clusterName.cmd
     }
 }
 
