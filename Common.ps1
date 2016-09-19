@@ -43,7 +43,11 @@ if (-not (Get-Command Expand-Archive -ErrorAction SilentlyContinue)) {
 function New-Shortcut
 {
     # Adapted from a post by CB (http://stackoverflow.com/a/9701907/27581)
-    param ( [string]$Path, $Target )
+    param (
+        [string] $Path,
+        [object] $Target,
+        [string[]] $Arguments
+    )
 
     if (-not $Path.EndsWith('.lnk')) {
         $Path = "$Path.lnk"
@@ -59,6 +63,17 @@ function New-Shortcut
     if ($Target.Directory)
     {
         $shortcut.WorkingDirectory = $Target.Directory.FullName
+    }
+
+    if ($Arguments) {
+        $shortcut.Arguments = @($Arguments | foreach {
+            if ($_ -like '* *') {
+                """$_"""
+            }
+            else {
+                $_
+            }
+        }) -join ' '
     }
 
     $shortcut.Save()

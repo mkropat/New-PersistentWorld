@@ -59,13 +59,15 @@ Copyright = '(c) 2016 Michael Kropat. All rights reserved.'
 # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
 NestedModules = @(
   'Configure-DontStarveServer.ps1',
-  'Configure-KerbalServer.ps1'
+  'Configure-KerbalServer.ps1',
+  'Configure-TerrariaServer.ps1'
 )
 
 # Functions to export from this module
 FunctionsToExport = @(
   'Configure-DontStarveServer',
-  'Configure-KerbalServer'
+  'Configure-KerbalServer',
+  'Configure-TerrariaServer'
 )
 
 # Cmdlets to export from this module
