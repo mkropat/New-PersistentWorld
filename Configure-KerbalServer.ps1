@@ -56,10 +56,10 @@ $serverDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'KerbalServ
 
 New-Item -ItemType Directory -Force -Path $serverDir | Out-Null
 
-if (-not (Test-Path $serverDir\DMPServer.zip)) {
-    Get-WebFile http://godarklight.info.tm/dmp/build/release/DMPServer.zip $serverDir -Sha256Checksum 363AD93BCE86464C5E0EE535E422BD427A833B047FFFF15452A6322A1022556B
+if (-not (Test-Path $serverDir\server.zip)) {
+    Get-WebFile http://godarklight.info.tm/dmp/build/release/DMPServer.zip $serverDir\server.zip -Sha256Checksum 363AD93BCE86464C5E0EE535E422BD427A833B047FFFF15452A6322A1022556B
     
-    Expand-Archive -Path $serverDir\DMPServer.zip -DestinationPath $serverDir
+    Expand-Archive -Path $serverDir\server.zip -DestinationPath $serverDir
     Move-Item $serverDir\DMPServer\* $serverDir
     Remove-Item $serverDir\DMPServer
 }
