@@ -196,6 +196,11 @@ if ($MaxPlayers) {
 
 $cfg | ConvertTo-Json -Depth 32 | Out-File -Encoding ascii "$serverDir\tshock\config.json"
 
+if (-not (Get-NetFirewallRule | where { $_.DisplayName -eq 'TerrariaServer' })) {
+    Write-Verbose 'Adding firewall exception...'
+    New-NetFirewallRule -DisplayName 'TerrariaServer' -Action Allow -Program $serverDir\TerrariaServer.exe | Out-Null
+}
+
 if ($AutoStart) {
     Write-Verbose 'Configuring Terraria to run on login...'
 

@@ -159,6 +159,11 @@ expireLogs=0
 safetyBubbleDistance=100
 "@ | Out-File -Encoding ascii $configDir\Settings.txt
 
+if (-not (Get-NetFirewallRule | where { $_.DisplayName -eq 'KerbalServer' })) {
+    Write-Verbose 'Adding firewall exception...'
+    New-NetFirewallRule -DisplayName 'KerbalServer' -Action Allow -Program $serverDir\DMPServer.exe | Out-Null
+}
+
 if ($AutoStart) {
     $startupDir = Get-StartupDir
     if (-not (Test-Path $startupDir\KerbalServer.lnk)) {
