@@ -46,6 +46,7 @@ function New-Shortcut
     param (
         [string] $Path,
         [object] $Target,
+        [object] $WorkingDirectory,
         [string[]] $Arguments
     )
 
@@ -60,7 +61,10 @@ function New-Shortcut
     $Target = Get-Item $Target
     $shortcut.TargetPath = $Target.FullName
 
-    if ($Target.Directory)
+    if ($WorkingDirectory) {
+         $shortcut.WorkingDirectory = Resolve-Path $WorkingDirectory | select -ExpandProperty Path
+    }
+    elseif ($Target.Directory)
     {
         $shortcut.WorkingDirectory = $Target.Directory.FullName
     }

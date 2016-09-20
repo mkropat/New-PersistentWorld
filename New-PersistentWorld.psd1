@@ -60,6 +60,7 @@ Copyright = '(c) 2016 Michael Kropat. All rights reserved.'
 NestedModules = @(
   'Configure-DontStarveServer.ps1',
   'Configure-KerbalServer.ps1',
+  'Configure-MinecraftServer.ps1',
   'Configure-TerrariaServer.ps1'
 )
 
@@ -67,6 +68,7 @@ NestedModules = @(
 FunctionsToExport = @(
   'Configure-DontStarveServer',
   'Configure-KerbalServer',
+  'Configure-MinecraftServer',
   'Configure-TerrariaServer'
 )
 
