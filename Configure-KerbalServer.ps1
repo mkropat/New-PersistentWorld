@@ -57,6 +57,8 @@ $serverDir = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'KerbalServ
 New-Item -ItemType Directory -Force -Path $serverDir | Out-Null
 
 if (-not (Test-Path $serverDir\server.zip)) {
+    Write-Verbose 'Downloading server software...'
+
     Get-WebFile http://godarklight.info.tm/dmp/build/release/DMPServer.zip $serverDir\server.zip -Sha256Checksum 363AD93BCE86464C5E0EE535E422BD427A833B047FFFF15452A6322A1022556B
     
     Expand-Archive -Path $serverDir\server.zip -DestinationPath $serverDir
@@ -162,6 +164,10 @@ safetyBubbleDistance=100
 if (-not (Get-NetFirewallRule | where { $_.DisplayName -eq 'KerbalServer' })) {
     Write-Verbose 'Adding firewall exception...'
     New-NetFirewallRule -DisplayName 'KerbalServer' -Action Allow -Program $serverDir\DMPServer.exe | Out-Null
+}
+
+if (-not (Test-Path $serverDir\RunServer.lnk)) {
+    New-Shortcut $serverDir\RunServer.lnk $serverDir\DMPServer.exe
 }
 
 if ($AutoStart) {

@@ -173,7 +173,7 @@ if (-not (Test-Path $serverDir\RunServer.lnk)) {
 if ($AutoStart) {
     $startupDir = Get-StartupDir
     if (-not (Test-Path $startupDir\MinecraftServer.lnk)) {
-        Write-Verbose 'Creating auto-startup shortcut...'
+        Write-Verbose 'Configuring Minecraft to run on login...'
         New-Shortcut $startupDir\MinecraftServer.lnk $java.Path -WorkingDirectory $serverDir -Arguments $linkArgs
     }
 }

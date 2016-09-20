@@ -18,7 +18,7 @@ $serverDir = "$documentsDir\TerrariaServer"
 New-Item -ItemType Directory -Force -Path $serverDir | Out-Null
 
 if (-not (Test-Path $serverDir\server.zip)) {
-    Write-Verbose 'Server software not found. Downloading it...'
+    Write-Verbose 'Downloading server software...'
 
     $releaseUrl = Invoke-WebRequest -UseBasicParsing https://api.github.com/repos/NyxStudios/TShock/releases/latest |
         ConvertFrom-Json |
@@ -201,27 +201,31 @@ if (-not (Get-NetFirewallRule | where { $_.DisplayName -eq 'TerrariaServer' })) 
     New-NetFirewallRule -DisplayName 'TerrariaServer' -Action Allow -Program $serverDir\TerrariaServer.exe | Out-Null
 }
 
+$linkArgs = @()
+
+if ($AutoStartWorldPath) {
+    $linkArgs = @('-world', $AutoStartWorldPath)
+}
+else {
+    $worldsDir = "$documentsDir\My Games\Terraria\Worlds"
+    $worldFiles = Get-Item "$worldsDir\*.wld"
+    if (@($worldFiles).Count -eq 1) {
+        $linkArgs = @('-world', $worldFiles.FullName)
+    }
+}
+
+if (-not (Test-Path $serverDir\RunServer.lnk)) {
+    Write-Verbose 'Creating RunServer shortcut...'
+    New-Shortcut $serverDir\RunServer.lnk $serverDir\TerrariaServer.exe -Arguments $linkArgs
+}
+
 if ($AutoStart) {
-    Write-Verbose 'Configuring Terraria to run on login...'
-
-    $args = @()
-
-    if ($AutoStartWorldPath) {
-        $args = @('-world', $AutoStartWorldPath)
-    }
-    else {
-        $worldsDir = "$documentsDir\My Games\Terraria\Worlds"
-        $worldFiles = Get-Item "$worldsDir\*.wld"
-        if (@($worldFiles).Count -eq 1) {
-            $args = @('-world', $worldFiles.FullName)
-        }
-    }
 
     $startupDir = Get-StartupDir
-    New-Shortcut $startupDir\TerrariaServer.lnk $serverDir\TerrariaServer.exe -Arguments $args
-
-    Write-Host 'Statup link created in ' -NoNewline
-    Write-Host -ForegroundColor Green 'shell:startup'
+    if (-not (Test-Path $startupDir\TerrariaServer.lnk)) {
+        Write-Verbose 'Configuring Terraria to run on login...'
+        New-Shortcut $startupDir\TerrariaServer.lnk $serverDir\TerrariaServer.exe -Arguments $linkArgs
+    }
 }
 
 }

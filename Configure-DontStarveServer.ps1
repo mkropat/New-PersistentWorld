@@ -340,6 +340,7 @@ start dontstarve_dedicated_server_nullrenderer -cluster $clusterName -shard Cave
 if ($AutoStart) {
     $startupDir = Get-StartupDir
     if (-not (Test-Path $startupDir\DontStarveServer.lnk)) {
+        Write-Verbose 'Configuring Don''t Starve to run on login...'
         New-Shortcut $startupDir\DontStarveServer.lnk $serverDir\Start$clusterName.cmd
     }
 }
